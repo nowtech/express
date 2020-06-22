@@ -1,21 +1,22 @@
-const express = require("express");
-const { postgraphile } = require("postgraphile");
+const express = require("express")
+const {postgraphile} = require("postgraphile")
 
 require('dotenv').config()
 
 
-const app = express();
+const app = express()
 
 app.use(
     postgraphile(
         process.env.DATABASE_URL || "postgres://postgres:@localhost:5432/pggql",
         "public",
         {
-          watchPg: true,
-          graphiql: true,
-          enhanceGraphiql: true,
+            watchPg: true,
+            graphiql: true,
+            enhanceGraphiql: true,
+            subscriptions: true
         }
     )
-);
+)
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 3000)
