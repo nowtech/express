@@ -11,7 +11,7 @@ exports.seed = async function(knex) {
     await knex('options').del()
 
     for (let i=0; i<numSuppliers; i++){
-
+console.log(i)
         const supplierId = uuid()
         await knex('suppliers').insert({id:supplierId, name:'supplier'+supplierId.substr(0,8)})
 

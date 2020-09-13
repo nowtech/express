@@ -71,6 +71,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="suppliers_pk" type="pk-constr" table="public.suppliers">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="blah" type="uq-constr" table="public.suppliers">
+		<columns names="blah" ref-type="src-columns"/>
+	</constraint>
 </table>
 
 <table name="products" layer="0" collapse-mode="2" max-obj-count="3">
