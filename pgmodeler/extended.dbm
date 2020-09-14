@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2" last-position="0,0" last-zoom="1" max-obj-count="7"
+<dbmodel pgmodeler-ver="0.9.3-beta" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="7"
 	 default-schema="public" default-owner="postgres">
 <role name="david"
       superuser="true"
@@ -55,7 +55,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 </extension>
 
-<table name="suppliers" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="suppliers" layer="0" collapse-mode="2" rls-enabled="true" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="180" y="60"/>
@@ -71,15 +71,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="suppliers_pk" type="pk-constr" table="public.suppliers">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="blah" type="uq-constr" table="public.suppliers">
-		<columns names="blah" ref-type="src-columns"/>
-	</constraint>
 </table>
 
-<table name="products" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="products" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment><![CDATA[@omit all]]></comment>
 	<position x="260" y="240"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
@@ -95,10 +91,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="options" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="options" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment><![CDATA[@omit create,read,update,delete,many,all]]></comment>
 	<position x="540" y="180"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
@@ -114,10 +109,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="assets" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="assets" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment><![CDATA[@omit create,read,update,delete,many,all]]></comment>
 	<position x="1200" y="260"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v4()">
 		<type name="uuid" length="0"/>
@@ -133,35 +127,37 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="many_products_has_many_assets" layer="0" collapse-mode="2" max-obj-count="3">
-	<schema name="public"/>
+<schema name="private" layer="0" rect-visible="true" fill-color="#e1e1e1">
 	<role name="postgres"/>
-	<comment><![CDATA[@omit read,update,create,delete,all,many]]></comment>
-	<position x="640" y="360"/>
-	<column name="id_products" not-null="true">
-		<type name="uuid" length="0"/>
-	</column>
-	<column name="id_assets" not-null="true">
-		<type name="uuid" length="0"/>
-	</column>
-	<constraint name="many_products_has_many_assets_pk" type="pk-constr" table="public.many_products_has_many_assets">
-		<columns names="id_products,id_assets" ref-type="src-columns"/>
-	</constraint>
-</table>
+</schema>
 
-<table name="suppliers_assets" layer="0" collapse-mode="2" max-obj-count="3">
-	<schema name="public"/>
+<table name="suppliers_assets" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="private"/>
 	<role name="postgres"/>
-	<comment><![CDATA[@omit create,read,update,delete,many,all]]></comment>
-	<position x="860" y="120"/>
+	<position x="900" y="480"/>
 	<column name="id_suppliers" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="id_assets" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
-	<constraint name="suppliers_assets_pk" type="pk-constr" table="public.suppliers_assets">
+	<constraint name="suppliers_assets_pk" type="pk-constr" table="private.suppliers_assets">
 		<columns names="id_suppliers,id_assets" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="many_products_has_many_assets" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="private"/>
+	<role name="postgres"/>
+	<position x="580" y="480"/>
+	<column name="id_products" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="id_assets" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="many_products_has_many_assets_pk" type="pk-constr" table="private.many_products_has_many_assets">
+		<columns names="id_products,id_assets" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -178,25 +174,25 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </constraint>
 
 <constraint name="products_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.products" table="public.many_products_has_many_assets">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.products" table="private.many_products_has_many_assets">
 	<columns names="id_products" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="assets_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.assets" table="public.many_products_has_many_assets">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.assets" table="private.many_products_has_many_assets">
 	<columns names="id_assets" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="suppliers_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.suppliers" table="public.suppliers_assets">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.suppliers" table="private.suppliers_assets">
 	<columns names="id_suppliers" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="assets_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.assets" table="public.suppliers_assets">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="public.assets" table="private.suppliers_assets">
 	<columns names="id_assets" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
@@ -215,25 +211,25 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <relationship name="rel_many_products_has_many_assets_products" type="relfk" layer="0"
 	 custom-color="#48eec4"
-	 src-table="public.many_products_has_many_assets"
+	 src-table="private.many_products_has_many_assets"
 	 dst-table="public.products" reference-fk="products_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_many_products_has_many_assets_assets" type="relfk" layer="0"
 	 custom-color="#a3ec9d"
-	 src-table="public.many_products_has_many_assets"
+	 src-table="private.many_products_has_many_assets"
 	 dst-table="public.assets" reference-fk="assets_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_suppliers_assets_suppliers" type="relfk" layer="0"
 	 custom-color="#d8d13c"
-	 src-table="public.suppliers_assets"
+	 src-table="private.suppliers_assets"
 	 dst-table="public.suppliers" reference-fk="suppliers_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_suppliers_assets_assets" type="relfk" layer="0"
 	 custom-color="#2d0867"
-	 src-table="public.suppliers_assets"
+	 src-table="private.suppliers_assets"
 	 dst-table="public.assets" reference-fk="assets_fk"
 	 src-required="false" dst-required="false"/>
 
