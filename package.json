@@ -12,7 +12,7 @@
     "graphile-worker": "^0.6.0",
     "knex": "^0.21.1",
     "knex-migrate": "^1.7.4",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "postgraphile": "^4.7.0",
     "uuid": "^8.1.0"
   }
